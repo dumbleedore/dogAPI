@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Dog {
-  id Int @id
+  id String @id
   name String
   breed String
   age Int
