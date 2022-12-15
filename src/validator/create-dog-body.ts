@@ -1,6 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-
-export default class DogValidator {
+export default class CreateDogBody {
   id: string;
   @IsNotEmpty()
   name: string;
