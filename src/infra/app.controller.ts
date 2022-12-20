@@ -18,11 +18,23 @@ export class AppController {
       where: { name: name },
     });
   }
+  @Get('findDogBetweenAge/:startAge/:endAge')
+  async findByAgeBetween(
+    @Param('startAge') startAge: string,
+    @Param('endAge') endAge: string,
+  ) {
+    return await this.prisma.dog.findMany({
+      where: {
+        age: {
+          lte: Number(endAge),
+          gte: Number(startAge),
+        },
+      },
+    });
+  }
   @Post('/create')
   async createDog(@Body() body: CreateDogBody) {
-    // getting DAO //
     const { name, breed, age } = body;
-    //saving on database //
     return await this.prisma.dog.create({
       data: {
         id: randomUUID(),
