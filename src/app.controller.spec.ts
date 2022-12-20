@@ -1,21 +1,36 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './infra/app.controller';
 import { PrismaService } from './infra/prisma.service';
+import { Dog } from '@prisma/client';
+import { Test } from '@nestjs/testing';
+import { randomUUID } from 'crypto';
+jest.mock('@prisma/client');
 describe('AppController', () => {
   let appController: AppController;
+  let appService: PrismaService;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       controllers: [AppController],
       providers: [PrismaService],
     }).compile();
-
-    appController = app.get<AppController>(AppController);
+    appService = moduleRef.get<PrismaService>(PrismaService);
+    appController = moduleRef.get<AppController>(AppController);
   });
-
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+  const dog: Dog[] = [
+    {
+      name: 'Layla',
+      breed: 'Labrador',
+      createdAt: new Date(),
+      id: randomUUID(),
+      age: 12,
+    },
+  ];
+  it('should return a list of dogs', async () => {
+    appService.dog.findMany = jest.fn().mockImplementation(() => {
+      return Promise.resolve(dog);
     });
+    const result = await appController.index();
+    console.log(appService);
+    expect(result).toEqual(dog);
   });
 });
